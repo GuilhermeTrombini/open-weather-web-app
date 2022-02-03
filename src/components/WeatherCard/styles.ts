@@ -33,23 +33,28 @@ export const Icon = styled.div`
 `;
 
 export const Temperature = styled.h2`
-  font-size: 50px;
+  font-size: 35px;
   margin-bottom: 5px;
+
+  @media (min-width: 768px) {
+    font-size: 50px;
+  }
 `;
 
 export const Location = styled.h3`
   width: 150px;
   font-size: 20px;
   font-family: Roboto-light;
+  margin-bottom: 5px;
 `;
 
 export const Description = styled.h4`
+  margin-top: 10px;
   font-size: 15px;
   font-family: Roboto-light;
 `;
 
 export const RefreshButton = styled.button`
-  margin-top: 15px;
   cursor: pointer;
   font-family: Roboto-bold;
   position: relative;
@@ -60,6 +65,7 @@ export const RefreshButton = styled.button`
   outline: none;
   border-radius: 10px;
   margin: 0 10px;
+  margin-top: 60px;
   padding: 23px 33px;
   border: 3px solid white;
   color: white;

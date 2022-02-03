@@ -1,6 +1,8 @@
 import { useEffect, useState } from "react";
 import { _getWeather } from "../../utils/Api/getWeather";
 import IconSelect from "../IconSelect/iconSelect";
+import Skeleton from "react-loading-skeleton";
+import "react-loading-skeleton/dist/skeleton.css";
 import {
   Container,
   Icon,
@@ -35,6 +37,7 @@ export default function WeatherCard() {
     wind: 0,
     humidity: 0,
   });
+  const [isLoading, setIsLoading] = useState(true);
   const [latLng, setLatLng] = useState({
     // default to Brasília
     lat: -15.474279,
@@ -42,24 +45,28 @@ export default function WeatherCard() {
   });
 
   const updateWeather = async (lat: number, lng: number) => {
+    setIsLoading(true);
     const data: any = await _getWeather(lat, lng);
     setWeather(data);
+    if (data) {
+      setIsLoading(false);
+    }
   };
 
-  function success(pos: any) {
+  const success = (pos: any) => {
     var crd = pos.coords;
     setLatLng({
       lat: crd.latitude,
       lng: crd.longitude,
     });
     updateWeather(crd.latitude, crd.longitude);
-  }
+  };
 
-  function error(err: any) {
+  const error = (err: any) => {
     updateWeather(latLng.lat, latLng.lng);
 
     console.warn("ERROR(" + err.code + "): " + err.message);
-  }
+  };
 
   useEffect(() => {
     var options = {
@@ -74,29 +81,109 @@ export default function WeatherCard() {
     <Container>
       <WeatherContainer>
         <ContentContainer>
-          <Icon>
-            <IconSelect iconType={weather.main} />
-          </Icon>
+          {isLoading ? (
+            <Icon>
+              <Skeleton
+                baseColor="#1c86be"
+                highlightColor="#09a9ff"
+                borderRadius="0.7rem"
+                height="100%"
+                duration={4}
+              />
+            </Icon>
+          ) : (
+            <Icon>
+              <IconSelect iconType={weather.main} />
+            </Icon>
+          )}
           <div>
-            <Temperature>{weather.temperature.current} °C</Temperature>
-            <Location>{weather.cityName}</Location>
+            {isLoading ? (
+              <Temperature>
+                <Skeleton
+                  baseColor="#1c86be"
+                  highlightColor="#09a9ff"
+                  borderRadius="0.7rem"
+                  height="100%"
+                  duration={4}
+                />
+              </Temperature>
+            ) : (
+              <Temperature>{weather.temperature.current} °C</Temperature>
+            )}
+            {isLoading ? (
+              <Location>
+                <Skeleton
+                  baseColor="#1c86be"
+                  highlightColor="#09a9ff"
+                  borderRadius="0.7rem"
+                  height="100%"
+                  duration={4}
+                />{" "}
+              </Location>
+            ) : (
+              <Location>{weather.cityName}</Location>
+            )}
           </div>
         </ContentContainer>
         <ContentContainer>
           <div>
-            <Location>Vento</Location>
-            <Description>{weather.wind} m/s</Description>
+            {isLoading ? (
+              <Location>
+                <Skeleton
+                  baseColor="#1c86be"
+                  highlightColor="#09a9ff"
+                  borderRadius="0.7rem"
+                  height="100%"
+                  duration={4}
+                  style={{ marginBottom: "5px", marginTop: "10px" }}
+                />{" "}
+                <Skeleton
+                  baseColor="#1c86be"
+                  highlightColor="#09a9ff"
+                  borderRadius="0.7rem"
+                  height="100%"
+                  width="40%"
+                  duration={4}
+                />{" "}
+              </Location>
+            ) : (
+              <>
+                <Location>Vento</Location>
+                <Description>{weather.wind} m/s</Description>
+              </>
+            )}
           </div>
           <div>
-            <Location>Umidade</Location>
-            <Description>{weather.humidity} %</Description>
+            {isLoading ? (
+              <Location>
+                <Skeleton
+                  baseColor="#1c86be"
+                  highlightColor="#09a9ff"
+                  borderRadius="0.7rem"
+                  height="110%"
+                  duration={4}
+                  style={{ marginBottom: "5px", marginTop: "10px" }}
+                />{" "}
+                <Skeleton
+                  baseColor="#1c86be"
+                  highlightColor="#09a9ff"
+                  borderRadius="0.7rem"
+                  height="110%"
+                  width="40%"
+                  duration={4}
+                />{" "}
+              </Location>
+            ) : (
+              <>
+                <Location>Umidade</Location>
+                <Description>{weather.humidity} %</Description>
+              </>
+            )}
           </div>
         </ContentContainer>
-        <ContentContainer>
-          <RefreshButton onClick={() => updateWeather(latLng.lat, latLng.lng)}>
-            Recaregar
-          </RefreshButton>
-        </ContentContainer>
+        <RefreshButton onClick={() => updateWeather(latLng.lat, latLng.lng)}>
+          Recaregar
+        </RefreshButton>
       </WeatherContainer>
     </Container>
   ) : (
@@ -105,7 +192,7 @@ export default function WeatherCard() {
         <ContentContainer>
           <Location>Falha ao carregar conteúdo</Location>
           <RefreshButton onClick={() => updateWeather(latLng.lat, latLng.lng)}>
-            Recaregar
+            Recarregar
           </RefreshButton>
         </ContentContainer>
       </WeatherContainer>
