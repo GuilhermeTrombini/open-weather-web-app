@@ -13,7 +13,7 @@ export const WeatherContainer = styled.div`
   width: 290px;
   display: block;
   margin: 0 auto;
-  padding-top: 20vh;
+  padding-top: 15vh;
   alignself: center;
 
   @media (min-width: 768px) {
@@ -65,7 +65,7 @@ export const RefreshButton = styled.button`
   outline: none;
   border-radius: 10px;
   margin: 0 10px;
-  margin-top: 60px;
+  margin-top: 5%;
   padding: 23px 33px;
   border: 3px solid white;
   color: white;
