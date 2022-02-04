@@ -43,38 +43,32 @@ export default function WeatherCard() {
     lat: -15.474279,
     lng: -48.84098,
   });
-
-  const updateWeather = async (lat: number, lng: number) => {
-    setIsLoading(true);
-    const data: any = await _getWeather(lat, lng);
+  var options = {
+    enableHighAccuracy: true,
+    timeout: 5000,
+    maximumAge: 0,
+  };
+  const success = async (pos: any) => {
+    var crd = pos.coords;
+    const data: any = await _getWeather(crd.latitude, crd.longitude);
     setWeather(data);
     if (data) {
       setIsLoading(false);
     }
   };
 
-  const success = (pos: any) => {
-    var crd = pos.coords;
-    setLatLng({
-      lat: crd.latitude,
-      lng: crd.longitude,
-    });
-    updateWeather(crd.latitude, crd.longitude);
+  const error = (err: any) => {
+    console.warn("ERROR(" + err.code + "): " + err.message);
+    updateWeather();
   };
 
-  const error = (err: any) => {
-    updateWeather(latLng.lat, latLng.lng);
-
-    console.warn("ERROR(" + err.code + "): " + err.message);
+  const updateWeather = () => {
+    setIsLoading(true);
+    navigator.geolocation.getCurrentPosition(success, error, options);
   };
 
   useEffect(() => {
-    var options = {
-      enableHighAccuracy: true,
-      timeout: 5000,
-      maximumAge: 0,
-    };
-    navigator.geolocation.getCurrentPosition(success, error, options);
+    updateWeather();
   }, []);
 
   return weather ? (
@@ -181,9 +175,7 @@ export default function WeatherCard() {
             )}
           </div>
         </ContentContainer>
-        <RefreshButton onClick={() => updateWeather(latLng.lat, latLng.lng)}>
-          Recaregar
-        </RefreshButton>
+        <RefreshButton onClick={() => updateWeather()}>Recaregar</RefreshButton>
       </WeatherContainer>
     </Container>
   ) : (
@@ -191,7 +183,7 @@ export default function WeatherCard() {
       <WeatherContainer>
         <ContentContainer>
           <Location>Falha ao carregar conteúdo</Location>
-          <RefreshButton onClick={() => updateWeather(latLng.lat, latLng.lng)}>
+          <RefreshButton onClick={() => updateWeather()}>
             Recarregar
           </RefreshButton>
         </ContentContainer>
